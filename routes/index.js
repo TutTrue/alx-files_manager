@@ -21,5 +21,6 @@ router.get('/files/:id', userAuth, FilesController.getShow);
 router.get('/files', userAuth, FilesController.getIndex);
 router.put('/files/:id/publish', userAuth, FilesController.putPublish);
 router.put('/files/:id/unpublish', userAuth, FilesController.putUnpublish);
+router.get('/files/:id/data', FilesController.getFile);
 
 export default router;
