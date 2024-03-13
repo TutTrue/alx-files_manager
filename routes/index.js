@@ -9,10 +9,15 @@ const router = Router();
 
 router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
+
 router.post('/users', UsersController.postNew);
+router.get('/users/me', userAuth, UsersController.getMe);
+
 router.get('/connect', AuthController.getConnect);
 router.get('/disconnect', userAuth, AuthController.getDisconnect);
-router.get('/users/me', userAuth, UsersController.getMe);
+
 router.post('/files', userAuth, FilesController.postUpload);
+router.get('/files/:id', userAuth, FilesController.getShow);
+router.get('/files', userAuth, FilesController.getIndex);
 
 export default router;

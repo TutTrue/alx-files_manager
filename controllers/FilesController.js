@@ -73,6 +73,56 @@ class FilesController {
       isPublic: isPublic || false,
     });
   }
+
+  static async getShow(req, res) {
+    try {
+      const { user } = req;
+      const { id } = req.params;
+      const file = await dbClient.client
+        .db()
+        .collection('files')
+        .findOne({ _id: ObjectId(id), userId: user._id });
+      if (!file) {
+        return res.status(404).send({ error: 'Not found' });
+      }
+      return res.status(200).json(file);
+    } catch (error) {
+      return res.status(400).send({ error: error.message });
+    }
+  }
+
+  static async getIndex(req, res) {
+    try {
+      const { user } = req;
+      const { parentId, page } = req.query;
+      const pageInt = page ? parseInt(page, 10) : 0;
+      const pageSize = 20;
+
+      const pipeline = [
+        {
+          $match: {
+            userId: user._id,
+            parentId: parentId ? ObjectId(parentId) : 0,
+          },
+        },
+        { $sort: { _id: -1 } },
+        { $skip: pageSize * pageInt },
+        { $limit: pageSize },
+      ];
+      const files = await dbClient.client
+        .db()
+        .collection('files')
+        .aggregate(pipeline)
+        .toArray();
+      if (!files) {
+        return res.status(200).send([]);
+      }
+
+      return res.status(200).json(files);
+    } catch (error) {
+      return res.status(400).send({ error: error.message });
+    }
+  }
 }
 
 export default FilesController;
