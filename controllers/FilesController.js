@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import { promises as fsPromises } from 'fs';
-import getUsetByToken from '../utils/utils';
 import dbClient from '../utils/db';
 
 class FilesController {
@@ -13,11 +12,8 @@ class FilesController {
       isPublic,
       data,
     } = req.body;
-    const token = req.headers['x-token'];
-    const user = await getUsetByToken(token);
-    if (!user) {
-      return res.status(401).send({ error: 'Unauthorized' });
-    }
+    const { user } = req;
+
     if (!name) {
       return res.status(400).send({ error: 'Missing name' });
     }
