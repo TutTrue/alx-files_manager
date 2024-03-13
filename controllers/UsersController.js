@@ -1,4 +1,5 @@
 import sha1 from 'sha1';
+import { ObjectId } from 'mongodb';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
@@ -40,7 +41,7 @@ class UserController {
     const user = await dbClient.client
       .db()
       .collection('users')
-      .findOne({ _id: userId });
+      .findOne({ _id: ObjectId(userId) });
     if (!user) {
       return res.status(404).send({ error: 'User not found' });
     }
