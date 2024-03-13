@@ -101,8 +101,8 @@ class FilesController {
       const pipeline = [
         {
           $match: {
-            userId: user._id,
-            parentId: parentId ? ObjectId(parentId) : 0,
+            userId: ObjectId(user._id),
+            parentId: parentId ? ObjectId(parentId) : '0',
           },
         },
         { $sort: { _id: -1 } },
@@ -117,8 +117,13 @@ class FilesController {
       if (!files) {
         return res.status(200).send([]);
       }
-
-      return res.status(200).json(files);
+      const filesWithId = files.map((file) => {
+        const newFile = { ...file };
+        newFile.id = newFile._id;
+        delete newFile._id;
+        return newFile;
+      });
+      return res.status(200).json(filesWithId);
     } catch (error) {
       return res.status(400).send({ error: error.message });
     }
