@@ -128,6 +128,62 @@ class FilesController {
       return res.status(400).send({ error: error.message });
     }
   }
+
+  static async putPublish(req, res) {
+    try {
+      const { user } = req;
+      const { id } = req.params;
+      const file = await dbClient.client
+        .db()
+        .collection('files')
+        .findOne({ _id: ObjectId(id), userId: user._id });
+      if (!file) {
+        return res.status(404).send({ error: 'Not found' });
+      }
+      const updatedFile = await dbClient.client
+        .db()
+        .collection('files')
+        .updateOne({ _id: ObjectId(id) }, { $set: { isPublic: true } });
+      return res.status(200).json({
+        id: updatedFile._id,
+        userId: user._id,
+        name: file.name,
+        type: file.type,
+        parentId: file.parentId,
+        isPublic: true,
+      });
+    } catch (error) {
+      return res.status(400).send({ error: error.message });
+    }
+  }
+
+  static async putUnpublish(req, res) {
+    try {
+      const { user } = req;
+      const { id } = req.params;
+      const file = await dbClient.client
+        .db()
+        .collection('files')
+        .findOne({ _id: ObjectId(id), userId: user._id });
+      if (!file) {
+        return res.status(404).send({ error: 'Not found' });
+      }
+      const updatedFile = await dbClient.client
+        .db()
+        .collection('files')
+        .updateOne({ _id: ObjectId(id) }, { $set: { isPublic: false } });
+      return res.status(200).json({
+        id: updatedFile._id,
+        userId: user._id,
+        name: file.name,
+        type: file.type,
+        parentId: file.parentId,
+        isPublic: false,
+      });
+    } catch (error) {
+      return res.status(400).send({ error: error.message });
+    }
+  }
 }
 
 export default FilesController;
